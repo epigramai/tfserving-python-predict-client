@@ -15,6 +15,9 @@ def predict(request_data, model_name, model_version, host='localhost', port='900
  - is_batch_shaped: by default tfserving expects the images to come in batches, set this parameter to False and the client will add a wrapping dimension before sending the data to the tfserving model
  - request_timeout: timeout sent to the grcp stub
  
+ `from predict_client import client`
+ `client.predict(request_data, 'mnist', 1, 'localhost', '9000')`
+ 
 ## Examples
 The mnist example expects an mnist model to be served on localhost:9000. In order to run examples/mnist.py you need to install flask.
 Send a POST request to localhost:5000 with an mnist image, and you should get a response with predictions for mnist back.
