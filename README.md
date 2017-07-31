@@ -16,6 +16,7 @@ def predict(request_data, model_name, model_version, host='localhost', port='900
  - request_timeout: timeout sent to the grcp stub
  
  `from predict_client import client`
+ 
  `client.predict(request_data, 'mnist', 1, 'localhost', '9000')`
  
 ## Examples
