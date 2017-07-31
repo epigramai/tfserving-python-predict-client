@@ -5,6 +5,9 @@ The predict client is meant to be used with a model served with tfserving. Becau
 be requested by just sending a normal HTTP request. The predict_client package is a grcp client that can request the service.
 Feel free to use this package to integrate your python apis with tfserving models.
 
+### Install
+`pip install git+ssh://git@github.com/epigramai/tfserving_predict_client.git`
+
 ## How to use
 def predict(request_data, model_name, model_version, host='localhost', port='9000', is_batch_shaped=True, request_timeout=10):
  - request_data: the data as a numpy array, in batches
