@@ -8,8 +8,7 @@ from predict_client.prediction_service_pb2 import PredictionServiceStub
 logger = logging.getLogger(__name__)
 
 
-def predict(request_data,  model_name, model_version, host='localhost', port='9000', is_batch_shaped=True, request_timeout=10):
-    host = host + ':' + port
+def predict(request_data,  model_name, model_version, host='localhost:9000', is_batch_shaped=True, request_timeout=10):
 
     tensor_shape = request_data.shape
 
