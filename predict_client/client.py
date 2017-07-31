@@ -13,7 +13,7 @@ def predict(request_data,  model_name, model_version, host='localhost', port='90
 
     tensor_shape = request_data.shape
 
-    logger.debug('Image shape: ' + str(tensor_shape))
+    logger.debug('Request data shape: ' + str(tensor_shape))
 
     if is_batch_shaped:
         tensor_shape = (1,) + tensor_shape
