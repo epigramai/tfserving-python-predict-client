@@ -22,6 +22,8 @@ def predict(request_data, model_name, model_version, host='localhost', port='900
  
  `client.predict(request_data, 'mnist', 1, 'localhost', '9000')`
  
+ The predict function returns a list of scores. For instance, if you send an mnist image to the client, it will return a list of length 10, where argmax of that list is the correct class. If you send multiple images in a batch, then the return value have length batch_size * scores_per_example. E.g if you send 5 mnist images, the return value will be a list with 50 floating points, reshape it and do argmax and you have the classes.
+ 
 ## Examples
 The mnist example expects an mnist model to be served on localhost:9000. In order to run examples/mnist.py you need to install flask.
 Send a POST request to localhost:5000 with an mnist image, and you should get a response with predictions for mnist back.
