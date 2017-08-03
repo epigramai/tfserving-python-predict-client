@@ -26,7 +26,9 @@ def predict(request_data, request_timeout=10):
  - request_timeout: timeout sent to the grcp stub
  
  `from predict_client.client import PredictClient`
+ 
  `client = PredictClient('localhost:9000', None, 'mnist', 1, num_scores=10)`
+ 
  `client.predict(request_data, 'mnist', 1, 'localhost', '9000')`
  
  The predict function returns a list of scores. For instance, if you send an mnist image to the client, it will return a list of length 10, where argmax of that list is the correct class.
