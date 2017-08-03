@@ -11,6 +11,9 @@ Thanks to https://github.com/tobegit3hub/tensorflow_template_application for wor
 ### Install
 `pip install git+ssh://git@github.com/epigramai/tfserving_predict_client.git`
 
+### If you need a model server
+There is one here https://hub.docker.com/r/epigramai/model-server/
+
 ## How to use
 Assume we have a model server running on localhost:9000, model_name=mnist and model_version=1.
 
