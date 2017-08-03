@@ -1,51 +1,68 @@
+import os
 import tensorflow as tf
 import grpc
 import logging
 
+from grpc import RpcError
 from predict_client.predict_pb2 import PredictRequest
 from predict_client.prediction_service_pb2 import PredictionServiceStub
 
 logger = logging.getLogger(__name__)
 
 
-def predict(request_data,  model_name, model_version, host='localhost:9000', is_batch_shaped=True, request_timeout=10):
+class PredictClient:
 
-    tensor_shape = request_data.shape
+    def __init__(self, localhost, envhost, model_name, model_version, num_scores=0):
+        if envhost and envhost in os.environ:
+            self.host = os.environ[envhost]
+        else:
+            logger.warning('Model host not in env variable')
+            self.host = localhost
 
-    logger.debug('Request data shape: ' + str(tensor_shape))
+        self.model_name = model_name
+        self.model_version = model_version
+        self.num_scores = num_scores
 
-    if is_batch_shaped:
-        tensor_shape = (1,) + tensor_shape
+    def predict(self, request_data, request_timeout=10):
 
-    if model_name == 'incv4' or model_name == 'res152':
-        features_tensor_proto = tf.contrib.util.make_tensor_proto(request_data, shape=tensor_shape)
-    else:
-        features_tensor_proto = tf.contrib.util.make_tensor_proto(request_data,
-                                                                  dtype=tf.float32, shape=tensor_shape)
+        logger.info('Sending request to tfserving model')
+        logger.info('Model name: ' + str(self.model_name))
+        logger.info('Model version: ' + str(self.model_version))
+        logger.info('Host: ' + str(self.host))
 
-    # Create gRPC client and request
-    channel = grpc.insecure_channel(host)
-    stub = PredictionServiceStub(channel)
-    request = PredictRequest()
+        tensor_shape = request_data.shape
 
-    request.model_spec.name = model_name
+        if self.model_name == 'incv4' or self.model_name == 'res152':
+            features_tensor_proto = tf.contrib.util.make_tensor_proto(request_data, shape=tensor_shape)
+        else:
+            features_tensor_proto = tf.contrib.util.make_tensor_proto(request_data,
+                                                                      dtype=tf.float32, shape=tensor_shape)
 
-    # request.model_spec.signature_name = 'serving_default'
-    if model_version > 0:
-        request.model_spec.version.value = model_version
+        # Create gRPC client and request
+        channel = grpc.insecure_channel(self.host)
+        stub = PredictionServiceStub(channel)
+        request = PredictRequest()
 
-    request.inputs['inputs'].CopyFrom(features_tensor_proto)
+        request.model_spec.name = self.model_name
 
-    # Send request
-    result = stub.Predict(request, timeout=request_timeout)
+        if self.model_version > 0:
+            request.model_spec.version.value = self.model_version
 
-    return list(result.outputs['scores'].float_val)
+        request.inputs['inputs'].CopyFrom(features_tensor_proto)
 
+        try:
+            result = stub.Predict(request, timeout=request_timeout)
+            logger.debug('Got scores with len: ' + str(len(list(result.outputs['scores'].float_val))))
+            return list(result.outputs['scores'].float_val)
+        except RpcError as e:
+            logger.error(e)
+            logger.warning('Prediciton failed. Returning empty predictions of length: ' + str(self.num_scores))
+            return [0] * self.num_scores
 
 if __name__ == '__main__':
     import cv2
-    img = cv2.imread('../data/correct-2-2.png', cv2.IMREAD_GRAYSCALE)
-    # predict takes an image with shape (height, width, depth)
-    img = img.reshape((img.shape + (1,)))
-    pred = predict(img, 'mnist', 1)
+    img = cv2.imread('/Users/slp/Development/side_model/data/test_mini/Image1714772_1.jpg')
+    # client = PredictClient('localhost:9000', 'INCV3_HOSTNAME', 'incv3', 1, prediction_shape=(2048,))
+    client = PredictClient('localhost:9001', 'INCV3_HOSTNAME', 'incv3', 1)
+    pred = client.predict(img)
     print(pred)
