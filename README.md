@@ -1,4 +1,4 @@
-# tf_serving_predict_client
+# tfserving_predict_client
 
 ## What is this?
 The predict client is meant to be used with a model served with tfserving. Because tfserving model server runs a grcp service, it cannot
