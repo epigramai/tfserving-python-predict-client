@@ -13,6 +13,7 @@ Thanks to https://github.com/tobegit3hub/tensorflow_template_application for wor
 
 ## How to use
 Assume we have a model server running on localhost:9000, model_name=mnist and model_version=1.
+
 def __init__(self, localhost, envhost, model_name, model_version, num_scores=0):
  - localhost: typically localhost:9000 if you are serving the model locally
  - envhost: if set the PredictClient will look in os.environ[envhost] for a host.
