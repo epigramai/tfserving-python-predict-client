@@ -6,7 +6,7 @@ be requested by just sending a normal HTTP request. The predict_client package i
 
 Feel free to use this package to integrate your python apis with tfserving models. Or clone the repo and make your own client.
 
-
+Thanks to https://github.com/tobegit3hub/tensorflow_template_application that provided the initial .pb files to make this possible in the first place :)
 
 ### Install
 `pip install git+ssh://git@github.com/epigramai/tfserving_predict_client.git`
