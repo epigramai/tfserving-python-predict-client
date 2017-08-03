@@ -13,7 +13,6 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-#import predict_pb2 as predict__pb2
 from predict_client.model_pb2 import DESCRIPTOR as PREDICT_DESCRIPTOR
 from predict_client.predict_pb2 import PredictRequest
 from predict_client.predict_pb2 import PredictResponse
@@ -157,5 +156,5 @@ try:
     stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
     return beta_implementations.dynamic_stub(channel, 'tensorflow.serving.PredictionService', cardinalities, options=stub_options)
 except ImportError:
-  print('ela')
+  pass
 # @@protoc_insertion_point(module_scope)

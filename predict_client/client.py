@@ -58,11 +58,3 @@ class PredictClient:
             logger.error(e)
             logger.warning('Prediciton failed. Returning empty predictions of length: ' + str(self.num_scores))
             return [0] * self.num_scores
-
-if __name__ == '__main__':
-    import cv2
-    img = cv2.imread('/Users/slp/Development/side_model/data/test_mini/Image1714772_1.jpg')
-    # client = PredictClient('localhost:9000', 'INCV3_HOSTNAME', 'incv3', 1, prediction_shape=(2048,))
-    client = PredictClient('localhost:9001', 'INCV3_HOSTNAME', 'incv3', 1)
-    pred = client.predict(img)
-    print(pred)

@@ -3,8 +3,10 @@ import logging
 from flask import Flask, request, Response, jsonify
 import socket
 import cv2
+import numpy as np
 
 from predict_client.client import PredictClient
+
 
 # Logger initialization
 # This must happen before any calls to debug(), info(), etc.
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
 # API initialization
 app = Flask(__name__)
 
-mnist_client = PredictClient('localhost:9000', None, 'mnist', 1, num_scores=10)
+mnist_client = PredictClient('localhost:9004', None, 'mnist', 1, num_scores=10)
 
 
 @app.route('/predict', methods=['POST'])
@@ -33,7 +35,8 @@ def predict():
         f.write(request.files['image'].read())
 
     img = cv2.imread('request.png', 0)
-    prediction = mnist_client.predict(img)
+    img = np.resize(img, (28, 28, 1))
+    prediction = mnist_client.predict(np.array([img]))
 
     logger.info('Prediction of length:' + str(len(prediction)))
 
