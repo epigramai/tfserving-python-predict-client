@@ -1,4 +1,3 @@
-import os
 import tensorflow as tf
 import grpc
 import logging
@@ -6,22 +5,15 @@ import logging
 from grpc import RpcError
 from predict_client.predict_pb2 import PredictRequest
 from predict_client.prediction_service_pb2 import PredictionServiceStub
+from predict_client.abstract_client import AbstractPredictClient
 
 logger = logging.getLogger(__name__)
 
 
-class PredictClient:
+class MockPredictClient(AbstractPredictClient):
 
-    def __init__(self, localhost, envhost, model_name, model_version, num_scores=0):
-        if envhost and envhost in os.environ:
-            self.host = os.environ[envhost]
-        else:
-            logger.warning('Model host not in env variable')
-            self.host = localhost
-
-        self.model_name = model_name
-        self.model_version = model_version
-        self.num_scores = num_scores
+    def __init__(self, host, model_name, model_version, num_scores=0):
+        super().__init__(host, model_name, model_version, num_scores)
 
     def predict(self, request_data, request_timeout=10):
 
@@ -52,9 +44,10 @@ class PredictClient:
 
         try:
             result = stub.Predict(request, timeout=request_timeout)
-            logger.debug('Got scores with len: ' + str(len(list(result.outputs['scores'].float_val))))
+            logger.debug('Predicted scores with len: ' + str(len(list(result.outputs['scores'].float_val))))
             return list(result.outputs['scores'].float_val)
         except RpcError as e:
-            logger.error(e)
-            logger.warning('Prediciton failed. Returning empty predictions of length: ' + str(self.num_scores))
+            logger.warning(e)
+            logger.warning('Prediction failed. Mock client will return empty prediction of length: '
+                           + str(self.num_scores))
             return [0] * self.num_scores

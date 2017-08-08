@@ -6,7 +6,7 @@ monkey.patch_all()
 
 import logging
 import cv2
-from predict_client.client import PredictClient
+from predict_client.mock_client import MockPredictClient
 from predict_client.util import run_concurrent_requests
 
 logging.basicConfig(level=logging.DEBUG,
@@ -14,9 +14,10 @@ logging.basicConfig(level=logging.DEBUG,
 
 logger = logging.getLogger(__name__)
 
-incv3_client = PredictClient('localhost:9000', None, 'incv3', 1, num_scores=2048)
-incv4_client = PredictClient('localhost:9001', None, 'incv4', 1, num_scores=1536)
-res152_client = PredictClient('localhost:9002', None, 'res152', 1, num_scores=2048)
+# Do this with PredictClient to see behavior if the model server is down
+incv3_client = MockPredictClient('localhost:9000', 'incv3', 1, num_scores=2048)
+incv4_client = MockPredictClient('localhost:9001', 'incv4', 1, num_scores=1536)
+res152_client = MockPredictClient('localhost:9002', 'res152', 1, num_scores=2048)
 
 # Open some image
 img = cv2.imread('request.png')
