@@ -75,7 +75,7 @@ class PredictClient:
             output_scores = np.array(result.outputs['scores'].float_val).reshape(score_shape)
 
             classes_shape = [x.size for x in result.outputs['classes'].tensor_shape.dim]
-            output_classes = np.array(result.outputs['classes'].string_val)
+            output_classes = np.array([c.decode('utf-8') for c in result.outputs['classes'].string_val])
 
             self.logger.info('Got scores with shape: ' + str(score_shape))
             self.logger.info('Got classes with shape: ' + str(classes_shape))
