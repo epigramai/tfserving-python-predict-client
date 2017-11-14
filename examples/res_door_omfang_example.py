@@ -15,13 +15,13 @@ logging.basicConfig(level=logging.DEBUG,
 # In each file/module, do this to get the module name in the logs
 logger = logging.getLogger(__name__)
 
-host = 'localhost:9001'
-model_name = 'incv4'
-model_version = 1
+host = 'localhost:9002'
+model_name = 'door'
+model_version = 2
 
 # Choose between inmemory og hosted
-client = ProdClient(host, model_name, model_version, in_tensor_dtype='uint8')
-# client = MockClient(os.path.join(os.path.dirname(__file__), '../models/incv4_1536/1/'))
+client = ProdClient(host, model_name, model_version, in_tensor_dtype='float32')
+# client = MockClient(os.path.join(os.path.dirname(__file__), '../models/door_omfang/2/'))
 
 base_path = os.path.join(os.path.dirname(__file__), '../test_data/catdogs')
 times = 0
@@ -39,7 +39,10 @@ for f in os.listdir(base_path):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (299, 299))
 
-    img_batch = np.array(img)
+    img = img / 255
+    img -= 0.5
+    img *= 2
+    img_batch = np.array([img])
 
     logger.info('Req data shape: ' + str(img_batch.shape))
 

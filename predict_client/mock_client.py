@@ -1,53 +1,51 @@
 import tensorflow as tf
-import grpc
 import logging
-
-from grpc import RpcError
-from predict_client.predict_pb2 import PredictRequest
-from predict_client.prediction_service_pb2 import PredictionServiceStub
-from predict_client.abstract_client import AbstractPredictClient
-
-logger = logging.getLogger(__name__)
+from tensorflow.python.saved_model import signature_constants
+from tensorflow.contrib.saved_model.python.saved_model import signature_def_utils
 
 
-class LocalFallbackClient(AbstractPredictClient):
+class MockClient:
+    def __init__(self, model_path):
 
-    def __init__(self, host, model_name, model_version, num_scores=0):
-        super().__init__(host, model_name, model_version, num_scores)
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.model_path = model_path
 
-    def predict(self, request_data, request_timeout=10):
+        if not tf.saved_model.loader.maybe_saved_model_directory(self.model_path):
+            raise ValueError('No model found in', self.model_path)
 
-        logger.info('Sending request to tfserving model')
-        logger.info('Model name: ' + str(self.model_name))
-        logger.info('Model version: ' + str(self.model_version))
-        logger.info('Host: ' + str(self.host))
+        self.sess = tf.Session(graph=tf.Graph())
 
-        tensor_shape = request_data.shape
+        meta_graph_def = tf.saved_model.loader.load(self.sess, [tf.saved_model.tag_constants.SERVING], self.model_path)
+        signature_def = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+        meta_graph_def_sig = signature_def_utils.get_signature_def_by_key(meta_graph_def, signature_def)
 
-        if self.model_name == 'incv4' or self.model_name == 'res152':
-            features_tensor_proto = tf.contrib.util.make_tensor_proto(request_data, shape=tensor_shape)
-        else:
-            features_tensor_proto = tf.contrib.util.make_tensor_proto(request_data,
-                                                                      dtype=tf.float32, shape=tensor_shape)
+        self.input_tensor_info = meta_graph_def_sig.inputs
+        self.output_tensor_info = meta_graph_def_sig.outputs
 
-        # Create gRPC client and request
-        channel = grpc.insecure_channel(self.host)
-        stub = PredictionServiceStub(channel)
-        request = PredictRequest()
+        self.input_tensor_name = self.input_tensor_info[signature_constants.CLASSIFY_INPUTS].name
 
-        request.model_spec.name = self.model_name
+        # Mock client only supports one input, named 'inputs', for now
+        if not self.input_tensor_name:
+            raise ValueError('Unable to find input tensor of model.'
+                             'Expected signature_constants.CLASSIFY_INPUTS to be only input tensor.')
 
-        if self.model_version > 0:
-            request.model_spec.version.value = self.model_version
+        self.output_tensor_keys = [k for k in self.output_tensor_info]
 
-        request.inputs['inputs'].CopyFrom(features_tensor_proto)
+        # Run all output tensors
+        if len(self.output_tensor_keys) == 0:
+            raise ValueError('Unable to find any output tensors of model.')
 
-        try:
-            result = stub.Predict(request, timeout=request_timeout)
-            logger.debug('Predicted scores with len: ' + str(len(list(result.outputs['scores'].float_val))))
-            return list(result.outputs['scores'].float_val)
-        except RpcError as e:
-            logger.warning(e)
-            logger.warning('Prediction failed. Mock client will return empty prediction of length: '
-                           + str(self.num_scores))
-            return [0] * self.num_scores
+        self.output_tensor_names = [self.output_tensor_info[k].name for k in self.output_tensor_keys]
+
+    def predict(self, request_data, **kwargs):
+
+        self.logger.info('Sending request to inmemory model')
+        self.logger.info('Model path: ' + str(self.model_path))
+
+        self.logger.debug('Running tensors: ' + str(self.output_tensor_names))
+
+        feed_dict = {self.input_tensor_name: request_data}
+
+        results = self.sess.run(self.output_tensor_names, feed_dict=feed_dict)
+
+        return {key: result for key, result in zip(self.output_tensor_keys, results)}

@@ -1,6 +1,5 @@
 .DS_Store
 .idea
 __pycache__/
-request.png
-2.jpg
-test_image.jpg
+test_data/
+models/

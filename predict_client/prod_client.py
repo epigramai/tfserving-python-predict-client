@@ -1,14 +1,12 @@
+import logging
+import time
 import tensorflow as tf
 import grpc
-import logging
-import numpy as np
-
 from grpc import RpcError
-from predict_client.predict_pb2 import PredictRequest
-from predict_client.prediction_service_pb2 import PredictionServiceStub
-import time
+from predict_client.pbs.prediction_service_pb2 import PredictionServiceStub
+from predict_client.pbs.predict_pb2 import PredictRequest
 
-logger = logging.getLogger(__name__)
+from util import result_to_dict
 
 tf_dtype_mapping = {
     'uint8': tf.uint8,
@@ -16,8 +14,9 @@ tf_dtype_mapping = {
 }
 
 
-class PredictClient:
+class ProdClient:
     def __init__(self, host, model_name, model_version, in_tensor_dtype='float32'):
+
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.host = host
@@ -26,7 +25,7 @@ class PredictClient:
 
         if in_tensor_dtype not in tf_dtype_mapping:
             self.in_tensor_dtype = tf.float32
-            logger.info('Param in_tensor_dtype not in tf_dype_mapping. Trying to use tf.float32.')
+            self.logger.info('Param in_tensor_dtype not in tf_dype_mapping. Trying to use tf.float32.')
         else:
             self.in_tensor_dtype = tf_dtype_mapping[in_tensor_dtype]
 
@@ -38,8 +37,9 @@ class PredictClient:
         self.logger.info('Model version: ' + str(self.model_version))
 
         t = time.time()
-        logger.debug('Request data shape: ' + str(request_data.shape))
-        tensor_proto = tf.contrib.util.make_tensor_proto(request_data, dtype=self.in_tensor_dtype, shape=request_data.shape)
+        self.logger.debug('Request data shape: ' + str(request_data.shape))
+        tensor_proto = tf.contrib.util.make_tensor_proto(request_data, dtype=self.in_tensor_dtype,
+                                                         shape=request_data.shape)
 
         self.logger.debug('Making tensor proto took: ' + str(time.time() - t))
 
@@ -68,19 +68,17 @@ class PredictClient:
             result = stub.Predict(request, timeout=request_timeout)
 
             self.logger.debug('Actual request took: ' + str(time.time() - t))
+            self.logger.info('Got result')
 
-            # Model server returns a flat list of scores,
-            # put all scores in an array with the correct shape
-            score_shape = [x.size for x in result.outputs['scores'].tensor_shape.dim]
-            output_scores = np.array(result.outputs['scores'].float_val).reshape(score_shape)
+            result_dict = result_to_dict(result)
 
-            classes_shape = [x.size for x in result.outputs['classes'].tensor_shape.dim]
-            output_classes = np.array([c.decode('utf-8') for c in result.outputs['classes'].string_val])
+            keys = [k for k in result_dict]
+            self.logger.info('Got result with keys: ' + str(keys))
 
-            self.logger.info('Got scores with shape: ' + str(score_shape))
-            self.logger.info('Got classes with shape: ' + str(classes_shape))
+            return result_dict
 
-            return output_scores, output_classes
         except RpcError as e:
             self.logger.error(e)
             self.logger.error('Prediction failed!')
+
+        return {}
