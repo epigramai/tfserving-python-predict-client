@@ -20,7 +20,7 @@ use the examples as a starting point.
 
 Although the models and test data is hidden to the public, the predict client is open source.
 
-#### predict_client.prod_client
+### predict_client.prod_client ProdClient
 def __init__(self, host, model_name, model_version):
  - host: the host (e.g. localhost:9000)
  - model_name: your model name, e.g. 'mnist'
@@ -39,7 +39,7 @@ ProdClient.predict(self, request_data, request_timeout=10):
  The predict function returns a dictionary with keys for each output tensor. The values in the dictionary will have the same shapes as
  the output tensor's shape. If an error occurs, predict will return an empty dict.
  
-#### predict_client.mock_client
+### predict_client.mock_client MockClient
 def __init__(self, model_path):
  - model_path
  
