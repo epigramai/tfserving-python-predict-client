@@ -36,22 +36,38 @@ ProdClient.predict(self, request_data, request_timeout=10):
  
  `client.predict(request_data)`
  
- The predict function returns a dictionary with keys for each output tensor. The values in the dictionary will have the same shapes as
+ The predict function returns a dictionary with keys and values for each output tensor. The values in the dictionary will have the same shapes as
  the output tensor's shape. If an error occurs, predict will return an empty dict.
  
-### predict_client.mock_client MockClient
+### predict_client.inmemory_client InMemoryClient
 def __init__(self, model_path):
  - model_path
+ 
+InMemoryClient.predict(self, request_data, request_timeout=None):
+ - request_data and request_timeout same as ProdClient, except request_timeout not used in mock client.
+ 
+ `from predict_client.inmemory_client import InMemoryClient`
+ 
+ `client = InMemoryClient('path/to/model.pb')`
+ 
+ `client.predict(request_data)`
+ 
+The predict function returns a dictionary with keys and values for each output tensor. The values in the dictionary will have the same shapes as
+the output tensor's shape. If an error occurs, predict will return an empty dict.
+  
+### predict_client.mock_client MockClient
+def __init__(self, mock_response):
+ - mock_response
  
 MockClient.predict(self, request_data, request_timeout=None):
  - request_data and request_timeout same as ProdClient, except request_timeout not used in mock client.
  
  `from predict_client.mock_client import MockClient`
  
- `client = MockClient('path/to/model.pb')`
+ `A mock response: mock_response={'scores': np.array([0.998, 0.002813, 0.0283]), 'classes': np.array(['dog', 'cat', 'horse'])}`
+ 
+ `client = MockClient(mock_response)`
  
  `client.predict(request_data)`
  
-The predict function returns a dictionary with keys for each output tensor. The values in the dictionary will have the same shapes as
-the output tensor's shape. If an error occurs, predict will return an empty dict. 
- 
+The mock client predict function simply returns the mock response. 

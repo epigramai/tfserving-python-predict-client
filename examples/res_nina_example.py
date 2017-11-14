@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 
-from predict_client.mock_client import MockClient
+from predict_client.inmemory_client import InMemoryClient
 from predict_client.prod_client import ProdClient
 
 # Logger initialization
@@ -21,7 +21,7 @@ model_version = 1
 
 # Choose between inmemory og hosted
 # client = ProdClient(host, model_name, model_version, in_tensor_dtype='uint8')
-client = MockClient(os.path.join(os.path.dirname(__file__), '../models/nina_rcnn_inception_resnet_v2/1/'))
+client = InMemoryClient(os.path.join(os.path.dirname(__file__), '../models/nina_rcnn_inception_resnet_v2/1/'))
 
 base_path = os.path.join(os.path.dirname(__file__), '../test_data/catdogs')
 times = 0
