@@ -11,9 +11,9 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from pbs.model_pb2 import DESCRIPTOR as PREDICT_DESCRIPTOR
-from pbs.predict_pb2 import PredictRequest
-from pbs.predict_pb2 import PredictResponse
+from predict_client.pbs.model_pb2 import DESCRIPTOR as PREDICT_DESCRIPTOR
+from predict_client.pbs.predict_pb2 import PredictRequest
+from predict_client.pbs.predict_pb2 import PredictResponse
 
 
 

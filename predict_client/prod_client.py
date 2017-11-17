@@ -6,7 +6,7 @@ from grpc import RpcError
 from predict_client.pbs.prediction_service_pb2 import PredictionServiceStub
 from predict_client.pbs.predict_pb2 import PredictRequest
 
-from util import result_to_dict
+from predict_client.util import result_to_dict
 
 tf_dtype_mapping = {
     'uint8': tf.uint8,

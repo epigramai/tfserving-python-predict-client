@@ -14,8 +14,8 @@ _sym_db = _symbol_database.Default()
 
 
 from tensorflow.core.framework import tensor_pb2 as tensorflow_dot_core_dot_framework_dot_tensor__pb2
-from pbs.model_pb2 import DESCRIPTOR as MODEL_DESCRIPTOR
-from pbs.model_pb2 import _MODELSPEC
+from predict_client.pbs.model_pb2 import DESCRIPTOR as MODEL_DESCRIPTOR
+from predict_client.pbs.model_pb2 import _MODELSPEC
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
