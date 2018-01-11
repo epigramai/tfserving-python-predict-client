@@ -24,6 +24,9 @@ class InMemoryClient:
 
         self.input_tensor_name = self.input_tensor_info[signature_constants.CLASSIFY_INPUTS].name
 
+        print(self.input_tensor_name)
+        self.logger.error('Input shape: {}'.format(tf.shape(self.input_tensor_name)))
+
         # Mock client only supports one input, named 'inputs', for now
         if not self.input_tensor_name:
             raise ValueError('Unable to find input tensor of model.'

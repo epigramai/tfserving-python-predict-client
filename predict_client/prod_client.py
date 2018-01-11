@@ -1,21 +1,13 @@
 import logging
 import time
-import tensorflow as tf
 import grpc
 from grpc import RpcError
 from predict_client.pbs.prediction_service_pb2 import PredictionServiceStub
 from predict_client.pbs.predict_pb2 import PredictRequest
-
-from predict_client.util import result_to_dict
-
-tf_dtype_mapping = {
-    'uint8': tf.uint8,
-    'float32': tf.float32
-}
-
+from predict_client.util import result_to_dict, make_tensor_proto
 
 class ProdClient:
-    def __init__(self, host, model_name, model_version, in_tensor_dtype='float32'):
+    def __init__(self, host, model_name, model_version, in_tensor_dtype):
 
         self.logger = logging.getLogger(self.__class__.__name__)
 
@@ -23,11 +15,7 @@ class ProdClient:
         self.model_name = model_name
         self.model_version = model_version
 
-        if in_tensor_dtype not in tf_dtype_mapping:
-            self.in_tensor_dtype = tf.float32
-            self.logger.info('Param in_tensor_dtype not in tf_dype_mapping. Trying to use tf.float32.')
-        else:
-            self.in_tensor_dtype = tf_dtype_mapping[in_tensor_dtype]
+        self.in_tensor_dtype = in_tensor_dtype
 
     def predict(self, request_data, request_timeout=10):
 
@@ -38,8 +26,10 @@ class ProdClient:
 
         t = time.time()
         self.logger.debug('Request data shape: ' + str(request_data.shape))
-        tensor_proto = tf.contrib.util.make_tensor_proto(request_data, dtype=self.in_tensor_dtype,
-                                                         shape=request_data.shape)
+        # tensor_proto = tf.contrib.util.make_tensor_proto(request_data, dtype=self.in_tensor_dtype,
+        #                                                  shape=request_data.shape)
+
+        # tensor_proto = tf.contrib.util.make_tensor_proto(request_data)
 
         self.logger.debug('Making tensor proto took: ' + str(time.time() - t))
 
@@ -58,8 +48,13 @@ class ProdClient:
 
         request.model_spec.name = self.model_name
 
-        if self.model_version > 0:
-            request.model_spec.version.value = self.model_version
+        # if self.model_version > 0:
+            # request.model_spec.version.value = self.model_version
+
+        # print(tensor_proto)
+        # request.inputs['inputs'].CopyFrom(tensor_proto)
+
+        tensor_proto = make_tensor_proto(request_data, self.in_tensor_dtype)
 
         request.inputs['inputs'].CopyFrom(tensor_proto)
 
