@@ -13,10 +13,7 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from predict_client.model_pb2 import DESCRIPTOR as PREDICT_DESCRIPTOR
-from predict_client.predict_pb2 import PredictRequest
-from predict_client.predict_pb2 import PredictResponse
-
+import predict_client.pbs.predict_pb2 as predict__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -25,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_pb=_b('\n\x18prediction_service.proto\x12\x12tensorflow.serving\x1a\rpredict.proto2g\n\x11PredictionService\x12R\n\x07Predict\x12\".tensorflow.serving.PredictRequest\x1a#.tensorflow.serving.PredictResponseB\x03\xf8\x01\x01\x62\x06proto3')
   ,
-  dependencies=[PREDICT_DESCRIPTOR])
+  dependencies=[predict__pb2.DESCRIPTOR,])
 
 
 
@@ -57,8 +54,8 @@ try:
       """
       self.Predict = channel.unary_unary(
           '/tensorflow.serving.PredictionService/Predict',
-          request_serializer=PredictRequest.SerializeToString,
-          response_deserializer=PredictResponse.FromString,
+          request_serializer=predict__pb2.PredictRequest.SerializeToString,
+          response_deserializer=predict__pb2.PredictResponse.FromString,
           )
 
 
@@ -79,8 +76,8 @@ try:
     rpc_method_handlers = {
         'Predict': grpc.unary_unary_rpc_method_handler(
             servicer.Predict,
-            request_deserializer=PredictRequest.FromString,
-            response_serializer=PredictResponse.SerializeToString,
+            request_deserializer=predict__pb2.PredictRequest.FromString,
+            response_serializer=predict__pb2.PredictResponse.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -126,10 +123,10 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_deserializers = {
-      ('tensorflow.serving.PredictionService', 'Predict'): PredictRequest.FromString,
+      ('tensorflow.serving.PredictionService', 'Predict'): predict__pb2.PredictRequest.FromString,
     }
     response_serializers = {
-      ('tensorflow.serving.PredictionService', 'Predict'): PredictResponse.SerializeToString,
+      ('tensorflow.serving.PredictionService', 'Predict'): predict__pb2.PredictResponse.SerializeToString,
     }
     method_implementations = {
       ('tensorflow.serving.PredictionService', 'Predict'): face_utilities.unary_unary_inline(servicer.Predict),
@@ -145,10 +142,10 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_serializers = {
-      ('tensorflow.serving.PredictionService', 'Predict'): PredictRequest.SerializeToString,
+      ('tensorflow.serving.PredictionService', 'Predict'): predict__pb2.PredictRequest.SerializeToString,
     }
     response_deserializers = {
-      ('tensorflow.serving.PredictionService', 'Predict'): PredictResponse.FromString,
+      ('tensorflow.serving.PredictionService', 'Predict'): predict__pb2.PredictResponse.FromString,
     }
     cardinalities = {
       'Predict': cardinality.Cardinality.UNARY_UNARY,

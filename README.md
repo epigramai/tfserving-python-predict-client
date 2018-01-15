@@ -1,12 +1,15 @@
 # tfserving_predict_client
 
 ## What is this?
-The predict client is meant to be used with a model served with tfserving. Because tfserving model server runs a grcp service, it cannot
+The predict client is meant to be used with a model served by TensorFlow Serving. Because tfserving model server runs a gRPC service, it cannot
 be requested by just sending a normal HTTP request. The predict_client package is a grcp client that can request the service.
 
 Feel free to use this package to integrate your python apis with tfserving models. Or clone the repo and make your own client.
 
-Thanks to https://github.com/tobegit3hub/tensorflow_template_application for working grcp pb-files and inspiration :)
+Read my blog posts about TensorFlow Serving:
+
+[Part 1](https://medium.com/p/a79726f7c103/) and [Part 2](https://medium.com/p/682eaf7469e7/)
+
 
 ### Install
 `pip install git+ssh://git@github.com/epigramai/tfserving_predict_client.git`
@@ -15,50 +18,64 @@ Thanks to https://github.com/tobegit3hub/tensorflow_template_application for wor
 There is one here https://hub.docker.com/r/epigramai/model-server/
 
 ## How to use
-Assume we have a model server running on localhost:9000, model_name=mnist and model_version=1.
+Check out the examples. The download scripts with test data and models will not work unless you have access to Epigram AI GCS buckets, but feel free to
+use the examples as a starting point.
 
-#### predict_client.prod_client.PredictClient
+Although the models and test data is hidden to the public, the predict client is open source.
+
+### predict_client.prod_client ProdClient
 def __init__(self, host, model_name, model_version):
  - host: the host (e.g. localhost:9000)
  - model_name: your model name, e.g. 'mnist'
  - model_version: model version, e.g. 1.
  
-PredictClient.predict(self, request_data, request_timeout=10):
- - request_data: the data as a numpy array, in batches
+ProdClient.predict(self, request_data, request_timeout=10):
+ - request_data: A list of input tensors, see the example.
  - request_timeout: timeout sent to the grcp stub
  
- `from predict_client.prod_client import PredictClient`
+ `from predict_client.prod_client import ProdClient`
  
  `client = PredictClient('localhost:9000', 'mnist', 1)`
  
  `client.predict(request_data)`
  
- The predict function returns a list of scores. For instance, if you send an mnist image to the client, it will return a list of length 10, where argmax of that list is the correct class.
- The predict client will return None if it fails.
+ The predict function returns a dictionary with keys and values for each output tensor. The values in the dictionary will have the same shapes as
+ the output tensor's shape. If an error occurs, predict will return an empty dict.
  
-#### predict_client.prod_client.MockPredictClient
-def __init__(self, host, model_name, model_version):
- - host, model_name and model_version same as PredictClient
- - num_scores: if the prediction fails (let's say the server is not running), then Predict client will return [0] * num_scores where num_scores is the output size of the model that should have been served.
+### predict_client.inmemory_client InMemoryClient
+def __init__(self, model_path):
+ - model_path
  
-MockPredictClient.predict(self, request_data, request_timeout=10):
- - request_data and request_timeout same as PredictClient
+InMemoryClient.predict(self, request_data, request_timeout=None):
+ - request_data and request_timeout same as ProdClient, except request_timeout not used in this client.
  
- `from predict_client.mock_client import MockPredictClient`
+ `from predict_client.inmemory_client import InMemoryClient`
  
- `client = MockPredictClient('localhost:9000', 'mnist', 1, num_scores=10)`
+ `client = InMemoryClient('path/to/model.pb')`
  
  `client.predict(request_data)`
  
- The predict function returns a list of scores. For instance, if you send an mnist image to the client, it will return a list of length 10, where argmax of that list is the correct class.
- The mock predict client will return \[0\] * num_scores if it fails. 
+The predict function returns a dictionary with keys and values for each output tensor. The values in the dictionary will have the same shapes as
+the output tensor's shape. If an error occurs, predict will return an empty dict.
+  
+### predict_client.mock_client MockClient
+def __init__(self, mock_response):
+ - mock_response
  
- ## TODO
- - Should be possible to send in batches. If you send multiple images in a batch, then the return value have length batch_size * scores_per_example. E.g if you send 5 mnist images, the return value will be a list with 50 floating points, reshape it and do argmax and you have the classes.
+MockClient.predict(self, request_data, request_timeout=None):
+ - request_data and request_timeout same as ProdClient, except request_timeout not used in mock client.
  
-## Examples
-The mnist example expects an mnist model to be served on localhost:9004. In order to run examples/mnist.py you need to install flask.
-Send a POST request to localhost:5000 with an mnist image, and you should get a response with predictions for mnist back.
+ `from predict_client.mock_client import MockClient` 
+ 
+ `client = MockClient(mock_response)`
+ 
+ `client.predict(request_data)`
+ 
+The mock client predict function simply returns the mock response.
 
-The concurrent example will run three request in parallel using gevent.
- 
+
+## Development
+
+### Generate python code from .proto files
+`pip install grpcio-tools`
+`python -m grpc_tools.protoc -I protos/ --python_out=predict_client/pbs --grpc_python_out=predict_client/pbs protos/*`
