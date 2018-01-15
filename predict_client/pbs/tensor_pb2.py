@@ -13,9 +13,9 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from . import resource_handle_pb2 as resource__handle__pb2
-from . import tensor_shape_pb2 as tensor__shape__pb2
-from . import types_pb2 as types__pb2
+import predict_client.pbs.resource_handle_pb2 as resource__handle__pb2
+import predict_client.pbs.tensor_shape_pb2 as tensor__shape__pb2
+import predict_client.pbs.types_pb2 as types__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

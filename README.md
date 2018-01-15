@@ -70,4 +70,11 @@ MockClient.predict(self, request_data, request_timeout=None):
  
  `client.predict(request_data)`
  
-The mock client predict function simply returns the mock response. 
+The mock client predict function simply returns the mock response.
+
+
+## Develop
+
+### Generate python code from .proto files
+`pip install grpcio-tools`
+`python -m grpc_tools.protoc -I protos/ --python_out=predict_client/pbs --grpc_python_out=predict_client/pbs protos/*`

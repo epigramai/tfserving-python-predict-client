@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 
 from predict_client.prod_client import ProdClient
 
@@ -9,13 +10,14 @@ logging.basicConfig(level=logging.DEBUG,
 logger = logging.getLogger(__name__)
 
 # Make sure you have a model running on localhost:9000
-host = 'localhost:9000'
-model_name = 'simple'
+host = 'localhost:9001'
+model_name = 'incv4'
 model_version = 1
+img = np.zeros((299, 299, 3)).astype(int)
+req_data = [{'in_tensor_name': 'inputs', 'in_tensor_dtype': 'DT_UINT8', 'data': img}]
 
 client = ProdClient(host, model_name, model_version)
 
-req_data = [{'in_tensor_name': 'a', 'in_tensor_dtype': 'DT_INT32', 'data': 2}]
-
 prediction = client.predict(req_data, request_timeout=10)
-logger.info('Prediction: {}'.format(prediction))
+for k in prediction:
+    logger.info('Prediction key: {}, shape: {}'.format(k, prediction[k].shape))

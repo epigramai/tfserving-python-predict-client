@@ -3,7 +3,7 @@ syntax = "proto3";
 package tensorflow.serving;
 option cc_enable_arenas = true;
 
-//import "google/protobuf/wrappers.proto";
+import "google/protobuf/wrappers.proto";
 
 // Metadata for an inference request such as the model name and version.
 message ModelSpec {
@@ -14,5 +14,5 @@ message ModelSpec {
   // Typically not needed unless coordinating across multiple models that were
   // co-trained and/or have inter-dependencies on the versions used at inference
   // time.
-  //google.protobuf.Int64Value version = 2;
+  google.protobuf.Int64Value version = 2;
 }

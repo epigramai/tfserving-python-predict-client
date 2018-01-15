@@ -68,24 +68,27 @@ def run_concurrent_requests(request_data, clients):
     return list(map(lambda j: j.value, jobs))
 
 
-def result_to_dict(result):
+def predict_response_to_dict(predict_response):
+    predict_response_dict = dict()
 
-    result_dict = dict()
-
-    for k in result.outputs:
-        shape = [x.size for x in result.outputs[k].tensor_shape.dim]
+    for k in predict_response.outputs:
+        shape = [x.size for x in predict_response.outputs[k].tensor_shape.dim]
 
         logger.debug('Key: ' + k + ', shape: ' + str(shape))
 
-        dtype_constant = result.outputs[k].dtype
+        dtype_constant = predict_response.outputs[k].dtype
 
         if dtype_constant not in number_to_dtype_value:
             logger.error('Tensor output data type not supported. Returning empty dict.')
-            result_dict[k] = 'value not found'
+            predict_response_dict[k] = 'value not found'
 
-        result_dict[k] = np.array(eval('result.outputs[k].' + number_to_dtype_value[dtype_constant])).reshape(shape)
+        if shape == [1]:
+            predict_response_dict[k] = eval('predict_response.outputs[k].' + number_to_dtype_value[dtype_constant])[0]
+        else:
+            predict_response_dict[k] = np.array(
+                eval('predict_response.outputs[k].' + number_to_dtype_value[dtype_constant])).reshape(shape)
 
-    return result_dict
+    return predict_response_dict
 
 
 def make_tensor_proto(data, dtype):
@@ -94,12 +97,19 @@ def make_tensor_proto(data, dtype):
     if type(dtype) is str:
         dtype = dtype_to_number[dtype]
 
+    dim = [{'size': 1}]
+    values = [data]
+
+    if hasattr(data, 'shape'):
+        dim = [{'size': dim} for dim in data.shape]
+        values = list(data.reshape(-1))
+
     tensor_proto_dict = {
         'dtype': dtype,
         'tensor_shape': {
-            'dim': [{'size': dim} for dim in data.shape]
+            'dim': dim
         },
-        'int_val': list(data.reshape(-1))
+        'int_val': values
     }
 
     dict_to_protobuf(tensor_proto_dict, tensor_proto)
