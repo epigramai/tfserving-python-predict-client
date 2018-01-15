@@ -1,5 +1,6 @@
+# Copied from https://github.com/davyzhang/dict-to-protobuf, thanks!
 import logging
-# https://github.com/davyzhang/dict-to-protobuf
+
 l = logging.getLogger('dict_to_protbuf')
 
 __all__ = ['dict_to_protobuf']

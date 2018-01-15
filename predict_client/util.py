@@ -1,5 +1,4 @@
 import logging
-import gevent
 import numpy as np
 from predict_client.pbs.tensor_pb2 import TensorProto
 from predict_client.dict_to_protobuf import dict_to_protobuf
