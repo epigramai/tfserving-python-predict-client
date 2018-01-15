@@ -1,4 +1,4 @@
-# tfserving_predict_client
+# tfserving-python-predict-client
 
 ## What is this?
 The predict client is meant to be used with a model served by TensorFlow Serving. Because tfserving model server runs a gRPC service, it cannot
@@ -12,7 +12,7 @@ Read my blog posts about TensorFlow Serving:
 
 
 ### Install
-`pip install git+ssh://git@github.com/epigramai/tfserving_predict_client.git`
+`pip install git+ssh://git@github.com/epigramai/tfserving-python-predict-client.git`
 
 ### If you need a model server
 There is one here https://hub.docker.com/r/epigramai/model-server/
