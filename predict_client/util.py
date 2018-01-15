@@ -48,26 +48,6 @@ number_to_dtype_value = {
 }
 
 
-def run_concurrent_requests(request_data, clients):
-    """ Makes predictions from all clients concurrently.
-
-        Arguments:
-        request_data -- data that can be fed into all clients
-        clients -- a list of PredictClient.predict functions
-
-        Returns:
-        A list of predictions from each client.
-    """
-
-    jobs = [gevent.spawn(c, d) for c, d in zip(clients, request_data)]
-    gevent.joinall(jobs, timeout=10)
-
-    for j in jobs:
-        print(j)
-
-    return list(map(lambda j: j.value, jobs))
-
-
 def predict_response_to_dict(predict_response):
     predict_response_dict = dict()
 
