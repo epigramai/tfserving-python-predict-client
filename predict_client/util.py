@@ -88,7 +88,7 @@ def make_tensor_proto(data, dtype):
         'tensor_shape': {
             'dim': dim
         },
-        'int_val': values
+        number_to_dtype_value[dtype]: values
     }
 
     dict_to_protobuf(tensor_proto_dict, tensor_proto)
