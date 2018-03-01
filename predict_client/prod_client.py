@@ -23,8 +23,6 @@ class ProdClient:
         self.logger.info('Model name: {}'.format(self.model_name))
         self.logger.info('Model version: {}'.format(self.model_version))
 
-        # self.logger.debug('Request data shape: {}'.format(request_data.shape))
-
         # Create gRPC client and request
         t = time.time()
         channel = grpc.insecure_channel(self.host)
