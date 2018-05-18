@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from predict_client.pbs.tensorflow.core.framework import tensor_pb2 as tensorflow_dot_core_dot_framework_dot_tensor__pb2
+import predict_client.pbs.tensor_pb2 as tensor__pb2
 import predict_client.pbs.model_pb2 as model__pb2
 
 
@@ -21,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='predict.proto',
   package='tensorflow.serving',
   syntax='proto3',
-  serialized_pb=_b('\n\rpredict.proto\x12\x12tensorflow.serving\x1a&tensorflow/core/framework/tensor.proto\x1a\x0bmodel.proto\"\xe2\x01\n\x0ePredictRequest\x12\x31\n\nmodel_spec\x18\x01 \x01(\x0b\x32\x1d.tensorflow.serving.ModelSpec\x12>\n\x06inputs\x18\x02 \x03(\x0b\x32..tensorflow.serving.PredictRequest.InputsEntry\x12\x15\n\routput_filter\x18\x03 \x03(\t\x1a\x46\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\"\x9d\x01\n\x0fPredictResponse\x12\x41\n\x07outputs\x18\x01 \x03(\x0b\x32\x30.tensorflow.serving.PredictResponse.OutputsEntry\x1aG\n\x0cOutputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\x42\x03\xf8\x01\x01\x62\x06proto3')
+  serialized_pb=_b('\n\rpredict.proto\x12\x12tensorflow.serving\x1a\x0ctensor.proto\x1a\x0bmodel.proto\"\xe2\x01\n\x0ePredictRequest\x12\x31\n\nmodel_spec\x18\x01 \x01(\x0b\x32\x1d.tensorflow.serving.ModelSpec\x12>\n\x06inputs\x18\x02 \x03(\x0b\x32..tensorflow.serving.PredictRequest.InputsEntry\x12\x15\n\routput_filter\x18\x03 \x03(\t\x1a\x46\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\"\x9d\x01\n\x0fPredictResponse\x12\x41\n\x07outputs\x18\x01 \x03(\x0b\x32\x30.tensorflow.serving.PredictResponse.OutputsEntry\x1aG\n\x0cOutputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.tensorflow.TensorProto:\x02\x38\x01\x42\x03\xf8\x01\x01\x62\x06proto3')
   ,
-  dependencies=[tensorflow_dot_core_dot_framework_dot_tensor__pb2.DESCRIPTOR,model__pb2.DESCRIPTOR,])
+  dependencies=[tensor__pb2.DESCRIPTOR,model__pb2.DESCRIPTOR,])
 
 
 
@@ -61,8 +61,8 @@ _PREDICTREQUEST_INPUTSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=247,
-  serialized_end=317,
+  serialized_start=221,
+  serialized_end=291,
 )
 
 _PREDICTREQUEST = _descriptor.Descriptor(
@@ -105,8 +105,8 @@ _PREDICTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=91,
-  serialized_end=317,
+  serialized_start=65,
+  serialized_end=291,
 )
 
 
@@ -143,8 +143,8 @@ _PREDICTRESPONSE_OUTPUTSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=406,
-  serialized_end=477,
+  serialized_start=380,
+  serialized_end=451,
 )
 
 _PREDICTRESPONSE = _descriptor.Descriptor(
@@ -173,15 +173,15 @@ _PREDICTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=320,
-  serialized_end=477,
+  serialized_start=294,
+  serialized_end=451,
 )
 
-_PREDICTREQUEST_INPUTSENTRY.fields_by_name['value'].message_type = tensorflow_dot_core_dot_framework_dot_tensor__pb2._TENSORPROTO
+_PREDICTREQUEST_INPUTSENTRY.fields_by_name['value'].message_type = tensor__pb2._TENSORPROTO
 _PREDICTREQUEST_INPUTSENTRY.containing_type = _PREDICTREQUEST
 _PREDICTREQUEST.fields_by_name['model_spec'].message_type = model__pb2._MODELSPEC
 _PREDICTREQUEST.fields_by_name['inputs'].message_type = _PREDICTREQUEST_INPUTSENTRY
-_PREDICTRESPONSE_OUTPUTSENTRY.fields_by_name['value'].message_type = tensorflow_dot_core_dot_framework_dot_tensor__pb2._TENSORPROTO
+_PREDICTRESPONSE_OUTPUTSENTRY.fields_by_name['value'].message_type = tensor__pb2._TENSORPROTO
 _PREDICTRESPONSE_OUTPUTSENTRY.containing_type = _PREDICTRESPONSE
 _PREDICTRESPONSE.fields_by_name['outputs'].message_type = _PREDICTRESPONSE_OUTPUTSENTRY
 DESCRIPTOR.message_types_by_name['PredictRequest'] = _PREDICTREQUEST
