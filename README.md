@@ -35,7 +35,7 @@ ProdClient.predict(self, request_data, request_timeout=10):
  
  `from predict_client.prod_client import ProdClient`
  
- `client = PredictClient('localhost:9000', 'mnist', 1)`
+ `client = ProdClient('localhost:9000', 'mnist', 1)`
  
  `client.predict(request_data)`
  
