@@ -8,5 +8,5 @@ setup(
     author='Stian Lind Petlund',
     author_email='stian@epigram.ai',
     packages=find_packages('.'),
-    install_requires=['grpcio==1.11.0', 'numpy==1.13.1']
+    install_requires=['grpcio==1.11.0', 'numpy>=1.13.1']
 )
