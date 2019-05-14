@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 import grpc
 from grpc import RpcError
@@ -10,13 +10,24 @@ from predict_client.util import predict_response_to_dict, make_tensor_proto
 
 
 class ProdClient:
-    def __init__(self, host: str, model_name: str, model_version: int):
+    def __init__(self, host: str, model_name: str, model_version: int, options: List[Tuple[str, Any]] = None):
+        """
+        Args:
+            host: The address and port of the model server
 
+            model_name: The model name at the server
+
+            model_version: The model version at the server
+
+            options: grpc options passed to the channel
+
+        """
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.host = host
         self.model_name = model_name
         self.model_version = model_version
+        self.options = options
 
     def predict(self, request_data: List[Dict[str, Any]], request_timeout: int = 10):
         """ Get a model prediction on request data
@@ -49,7 +60,7 @@ class ProdClient:
 
         # Create gRPC client and request
         t = time.time()
-        with grpc.insecure_channel(self.host) as channel:
+        with grpc.insecure_channel(self.host, options=self.options) as channel:
 
             self.logger.debug('Establishing insecure channel took: {}'.format(time.time() - t))
 
